@@ -1,0 +1,21 @@
+﻿@using TesteDesenvolvedor.Models
+@model Aluno
+@{
+    ViewBag.Title = "Cadastrar Aluno";
+}
+
+@using (Html.BeginForm("CadastrarAluno", "Home", FormMethod.Post, new { @class = "form-group" }))
+ {
+    <div class="container-fluid">
+        @Html.AntiForgeryToken()
+        <fieldset>
+            <legend>Cadastro de Aluno</legend>
+            @Html.Label("Nome do Aluno")
+            @Html.TextBoxFor(Model => Model.Nome_Aluno, new { @class = "form-control" })
+      
+        </fieldset>
+        <input type="submit" value="Finalizar Cadastro" class="btn btn-success" />
+    </div>
+ }
+
+

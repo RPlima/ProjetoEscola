@@ -17,8 +17,8 @@
             {
                 <tr class="table-primary">
                     <td>@aluno.Nome_Aluno</td>
-                    <td>@Html.ActionLink("Editar Aluno", "EditarAluno", "Home")</td>
-                    <td>@Html.ActionLink("Excluir Aluno", "ExcluirAluno", "Home")</td>
+                    <td>@Html.ActionLink("Editar Aluno", "EditarAluno", "Home", new { idAluno = aluno.IdAluno}, new { @class = "btn btn-warning" })</td>
+                    <td>@Html.ActionLink("Excluir Aluno", "ExcluirAluno", "Home", new{IdAluno = aluno.IdAluno}, new { @class = "btn btn-danger" })</td>
                 </tr>
 
             }

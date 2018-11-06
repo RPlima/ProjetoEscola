@@ -1,0 +1,22 @@
+﻿@using TesteDesenvolvedor.Models
+@model Aluno
+@{
+    ViewBag.Title = "Editar Aluno";
+
+}
+
+@using (Html.BeginForm("EditarAluno", "Home", FormMethod.Post, new { @class = "form-group" }))
+{
+    <div class="container-fluid">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(Model => Model.IdAluno)
+        <fieldset>
+            <legend>Cadastro de Aluno</legend>
+            @Html.Label("Nome do Aluno")
+            @Html.TextBoxFor(Model => Model.Nome_Aluno, new { @class = "form-control" })
+
+        </fieldset>
+        <input type="submit" value="Editar" class="btn btn-success" />
+    </div>
+}
+

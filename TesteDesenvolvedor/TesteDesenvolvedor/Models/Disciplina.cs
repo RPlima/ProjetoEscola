@@ -16,5 +16,6 @@ namespace TesteDesenvolvedor.Models
         [ForeignKey("IdAluno")]
         public int IdAluno { get; set; }
 
+        public string NomeDisciplina { get; set; }
     }
 }

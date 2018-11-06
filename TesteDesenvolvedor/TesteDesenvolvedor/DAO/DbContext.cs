@@ -75,8 +75,15 @@ namespace TesteDesenvolvedor.DAO
         private const string InsertAluno = @"insert into Aluno(Nome) values(@Nome)";
 
         private const string BuscarTodosAlunos = @"Select * From Aluno";
+
+        private const string BuscarAlunoId = @"Select * From Aluno where IdAluno = @IdAluno";
+
+        private const string UpdateAluno = @"Update Aluno set Nome = @Nome where IdAluno = @IdAluno";
+
+        private const string DeleteAluno = @"Delete Aluno where IdAluno = @IdAluno";
         #endregion
 
+        #region Insert de Alunos
         public static void InsertAlunoDb(Aluno aluno)
         {
             SqlCommand cmd = new SqlCommand();
@@ -97,7 +104,9 @@ namespace TesteDesenvolvedor.DAO
                 conn.Close();
             }
         }
+        #endregion
 
+        #region Processo de Select de Alunos
         public static List<Aluno> SelectAlunos()
         {
             SqlCommand cmd = new SqlCommand();
@@ -123,6 +132,88 @@ namespace TesteDesenvolvedor.DAO
            
             return alunos;
         }
-       
+        #endregion
+
+        #region Select aluno Por id
+        public static Aluno BuscarAlunoById(int id)
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlDataReader dr = null;
+            SqlConnection conn = null;
+            AcessarDb(cmd, conn, BuscarAlunoId);
+
+            List<SqlParameter> param = new List<SqlParameter>();
+            param.Add(new SqlParameter("@IdAluno", SqlDbType.Int));
+            param[0].Value = id;
+
+            cmd.Parameters.Add(param[0]);
+
+            dr = cmd.ExecuteReader();
+
+            Aluno aluno = new Aluno();
+            while (dr.Read())
+            {
+                if (dr["Nome"] != DBNull.Value)
+                    aluno.IdAluno = Convert.ToInt32(dr["IdAluno"]);
+                    aluno.Nome_Aluno = Convert.ToString(dr["Nome"]);
+            }
+
+            cmd.Parameters.Clear();
+            return aluno;
+        }
+        #endregion
+
+        #region Update de Aluno
+        public static void UpdateAlunoDb(Aluno aluno)
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlConnection conn = null;
+            List<SqlParameter> param = new List<SqlParameter>();
+            param.Add(new SqlParameter("@Nome", SqlDbType.VarChar));
+            param.Add(new SqlParameter("@IdAluno", SqlDbType.Int));
+            param[0].Value = aluno.Nome_Aluno;
+            param[1].Value = aluno.IdAluno;
+
+            cmd.Parameters.Add(param[0]);
+            cmd.Parameters.Add(param[1]);
+
+            conn = AcessarDb(cmd, conn, UpdateAluno);
+            using (SqlTransaction trans = conn.BeginTransaction())
+            {
+                cmd.Transaction = trans;
+
+                cmd.ExecuteNonQuery();
+                cmd.Parameters.Clear();
+                trans.Commit();
+                conn.Close();
+            }
+        }
+
+        #endregion
+
+        #region Delete de Aluno
+        public static void DeleteAlunoDb(int id)
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlConnection conn = null;
+            List<SqlParameter> param = new List<SqlParameter>();
+            param.Add(new SqlParameter("@IdAluno", SqlDbType.Int));
+            param[0].Value = id;
+
+            cmd.Parameters.Add(param[0]);
+
+            conn = AcessarDb(cmd, conn, DeleteAluno);
+            using (SqlTransaction trans = conn.BeginTransaction())
+            {
+                cmd.Transaction = trans;
+
+                cmd.ExecuteNonQuery();
+                cmd.Parameters.Clear();
+                trans.Commit();
+                conn.Close();
+            }
+        }
+        #endregion
+
     }
 }

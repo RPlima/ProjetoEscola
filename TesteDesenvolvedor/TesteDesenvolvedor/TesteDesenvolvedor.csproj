@@ -195,6 +195,8 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\GerenciarAlunos.cshtml" />
     <Content Include="Views\Home\CadastrarAluno.cshtml" />
+    <Content Include="Views\Home\EditarAluno.cshtml" />
+    <Content Include="Views\Home\GerenciarDisciplinas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,31 @@
+﻿@using TesteDesenvolvedor.Models
+@model List<Disciplina>
+@{
+    ViewBag.Title = "Gerenciar Disciplinas";
+}
+
+
+<div class="container-fluid" style="width: 40%;">
+    <h2>Gerenciar Alunos</h2>
+    <table class="table table-hover">
+        <tr class="table-secondary">
+            <th scope="col">IdDisciplina</th>
+            <th scope="col">Disciplina</th>
+            <th scope="col">Id Aluno</th>
+            <th scope="col">Editar</th>
+            <th scope="col">Excluir</th>
+        </tr>
+        @foreach (Disciplina disciplina in Model)
+        {
+        <tr class="table-primary">
+            <td>@disciplina.IdDisciplina</td>
+            <td>@disciplina.</td>
+            <td>@disciplina.IdAluno</td>
+            <td>@Html.ActionLink("Editar Aluno", "EditarAluno", "Home", new { idAluno = disciplina.IdDisciplina }, new { @class = "btn btn-warning" })</td>
+            <td>@Html.ActionLink("Excluir Aluno", "ExcluirAluno", "Home", new { IdAluno = disciplina.IdDisciplina }, new { @class = "btn btn-danger" })</td>
+        </tr>
+
+        }
+    </table>
+    @Html.ActionLink("Cadastrar", "CadastrarAluno", "Home", null, new { @class = "btn btn-success" })
+</div>

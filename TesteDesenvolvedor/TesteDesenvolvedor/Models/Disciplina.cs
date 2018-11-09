@@ -17,5 +17,7 @@ namespace TesteDesenvolvedor.Models
         public int IdAluno { get; set; }
 
         public string NomeDisciplina { get; set; }
+
+        public virtual Aluno Aluno { get; set; }
     }
 }

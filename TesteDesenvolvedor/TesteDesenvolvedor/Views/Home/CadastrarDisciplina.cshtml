@@ -1,0 +1,21 @@
+﻿@using TesteDesenvolvedor.Models
+@model Disciplina
+@{
+    ViewBag.Title = "Cadastrar Disciplina";
+}
+
+@using (Html.BeginForm("CadastrarDisciplina", "Home", FormMethod.Post, new { @class = "form-group" }))
+{
+<div class="container-fluid">
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, null, new { @class = "text-danger" })
+    <fieldset>
+        <legend>Cadastro de Disciplina</legend>
+        @Html.Label("Nome da Disciplina")
+        @Html.TextBoxFor(Model => Model.NomeDisciplina, new { @class = "form-control" })
+        @Html.Label("Nome do Aluno")
+        @Html.DropDownList("IdAluno", null, "-- Selecione --", htmlAttributes: new { @class = "form-control" })
+    </fieldset>
+    <input type="submit" value="Concluir" class="btn btn-success" />
+</div>
+}

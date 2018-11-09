@@ -17,6 +17,8 @@ namespace TesteDesenvolvedor.Controllers
         }
         #endregion
 
+        #region CRUD dos Alunos
+
         #region Pag Gerenciar Alunos
         public ActionResult GerenciarAlunos()
         {
@@ -54,7 +56,7 @@ namespace TesteDesenvolvedor.Controllers
         [HttpPost]
         public ActionResult EditarAluno(Aluno alunoNovo)
         {
-            if(alunoNovo.IdAluno == 0 || alunoNovo.Nome_Aluno == null)
+            if (alunoNovo.IdAluno == 0 || alunoNovo.Nome_Aluno == null)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -64,14 +66,51 @@ namespace TesteDesenvolvedor.Controllers
             AlunoDAO.EditarAluno(alunoOriginal);
 
             return RedirectToAction("GerenciarAlunos", "Home");
-      
+
         }
         #endregion
 
+        #region Excluir Aluno
         public ActionResult ExcluirAluno(int IdAluno)
         {
             AlunoDAO.ExcluirAluno(IdAluno);
             return RedirectToAction("GerenciarAlunos", "Home");
         }
+        #endregion
+
+        #endregion
+
+        #region CRUD das Disciplinas
+        public ActionResult GerenciarDisciplinas()
+        {
+            return View(DisciplinaDAO.BuscarDisciplinas());
+        }
+        #endregion
+
+        #region Pag Cadastrar Disciplina
+        public ActionResult CadastrarDisciplina()
+        {
+            ViewBag.IdAluno = new SelectList(AlunoDAO.BuscarAlunos(), "IdAluno", "Nome_Aluno");
+            return View();
+        }
+        #endregion
+
+        #region Cadastrar Disciplina
+        [HttpPost]
+        public ActionResult CadastrarDisciplina(Disciplina disciplina)
+        {
+            ViewBag.IdAluno = new SelectList(AlunoDAO.BuscarAlunos(), "IdAluno", "Nome_Aluno");
+            if (disciplina.NomeDisciplina.Equals("") || disciplina.IdAluno == 0)
+            {
+                ModelState.AddModelError("", "O Nome da Disciplina e o aluno não podem ser nulos!");
+                return View(disciplina);
+            }
+            else
+            {
+                DisciplinaDAO.CadastrarDisciplina(disciplina);
+                return RedirectToAction("GerenciarDisciplinas", "Home");
+            }
+        }
+        #endregion
     }
 }

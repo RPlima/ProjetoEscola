@@ -56,14 +56,14 @@ namespace TesteDesenvolvedor.DAO
         #region Acesso Ao Banco
         private const string strcon = "Data Source=CQI-DEV-0833;Initial Catalog=Escola;Integrated Security=SSPI;";
 
-    
-        public static SqlConnection AcessarDb(SqlCommand cmd, SqlConnection conn , string Query)
+
+        public static SqlConnection AcessarDb(SqlCommand cmd, SqlConnection conn, string Query)
         {
             conn = new SqlConnection(strcon);
             cmd.Connection = conn;
 
-            if(!conn.State.Equals(true))
-            conn.Open();
+            if (!conn.State.Equals(true))
+                conn.Open();
 
             cmd.CommandType = CommandType.Text;
             cmd.CommandText = Query;
@@ -72,16 +72,30 @@ namespace TesteDesenvolvedor.DAO
         #endregion
 
         #region Query's de Acesso ao Banco
-        private const string InsertAluno = @"insert into Aluno(Nome) values(@Nome)";
+
+        #region Alunos Query's
+        private const string InsertAluno = @"insert into Aluno(Nome_Aluno) values(@Nome_Aluno)";
 
         private const string BuscarTodosAlunos = @"Select * From Aluno";
 
         private const string BuscarAlunoId = @"Select * From Aluno where IdAluno = @IdAluno";
 
-        private const string UpdateAluno = @"Update Aluno set Nome = @Nome where IdAluno = @IdAluno";
+        private const string UpdateAluno = @"Update Aluno set Nome_Aluno = @Nome_Aluno where IdAluno = @IdAluno";
 
         private const string DeleteAluno = @"Delete Aluno where IdAluno = @IdAluno";
         #endregion
+
+        #region Disciplinas Query
+        private const string BuscarTodasDisciplinas = @"Select IdDisciplina,NomeDisciplina,Nome_Aluno, d.IdAluno 
+                                                 from Disciplina d Join Aluno a on d.IdAluno = a.IdAluno";
+
+        private const string InsertDisciplina = @"insert into Disciplina(NomeDisciplina, IdAluno) values(@NomeDisciplina, @IdAluno)";
+
+        #endregion
+
+        #endregion
+
+        #region CRUD da tabela Aluno
 
         #region Insert de Alunos
         public static void InsertAlunoDb(Aluno aluno)
@@ -89,7 +103,7 @@ namespace TesteDesenvolvedor.DAO
             SqlCommand cmd = new SqlCommand();
             SqlConnection conn = null;
             List<SqlParameter> param = new List<SqlParameter>();
-            param.Add(new SqlParameter("@Nome",SqlDbType.VarChar));
+            param.Add(new SqlParameter("@Nome_Aluno", SqlDbType.VarChar));
             param[0].Value = aluno.Nome_Aluno;
 
             cmd.Parameters.Add(param[0]);
@@ -112,7 +126,7 @@ namespace TesteDesenvolvedor.DAO
             SqlCommand cmd = new SqlCommand();
             SqlDataReader dr = null;
             SqlConnection conn = null;
-            AcessarDb(cmd,conn , BuscarTodosAlunos);
+            AcessarDb(cmd, conn, BuscarTodosAlunos);
             dr = cmd.ExecuteReader();
 
             Aluno aluno;
@@ -121,15 +135,15 @@ namespace TesteDesenvolvedor.DAO
             {
                 aluno = new Aluno();
 
-                if (dr["Nome"] != DBNull.Value)
+                if (dr["Nome_Aluno"] != DBNull.Value)
                     aluno.IdAluno = Convert.ToInt32(dr["IdAluno"]);
-                    aluno.Nome_Aluno = Convert.ToString(dr["Nome"]);
-                if(aluno.Nome_Aluno != null)
+                aluno.Nome_Aluno = Convert.ToString(dr["Nome_Aluno"]);
+                if (aluno.Nome_Aluno != null)
                 {
                     alunos.Add(aluno);
                 }
             }
-           
+
             return alunos;
         }
         #endregion
@@ -153,9 +167,9 @@ namespace TesteDesenvolvedor.DAO
             Aluno aluno = new Aluno();
             while (dr.Read())
             {
-                if (dr["Nome"] != DBNull.Value)
+                if (dr["Nome_Aluno"] != DBNull.Value)
                     aluno.IdAluno = Convert.ToInt32(dr["IdAluno"]);
-                    aluno.Nome_Aluno = Convert.ToString(dr["Nome"]);
+                aluno.Nome_Aluno = Convert.ToString(dr["Nome_Aluno"]);
             }
 
             cmd.Parameters.Clear();
@@ -169,7 +183,7 @@ namespace TesteDesenvolvedor.DAO
             SqlCommand cmd = new SqlCommand();
             SqlConnection conn = null;
             List<SqlParameter> param = new List<SqlParameter>();
-            param.Add(new SqlParameter("@Nome", SqlDbType.VarChar));
+            param.Add(new SqlParameter("@Nome_Aluno", SqlDbType.VarChar));
             param.Add(new SqlParameter("@IdAluno", SqlDbType.Int));
             param[0].Value = aluno.Nome_Aluno;
             param[1].Value = aluno.IdAluno;
@@ -213,6 +227,72 @@ namespace TesteDesenvolvedor.DAO
                 conn.Close();
             }
         }
+        #endregion
+
+        #endregion
+
+        #region CRUD da Tabela Disciplina
+
+        #region Processo de Select de Disciplinas
+        public static List<Disciplina> SelectDisciplinas()
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlDataReader dr = null;
+            SqlConnection conn = null;
+            AcessarDb(cmd, conn, BuscarTodasDisciplinas);
+            dr = cmd.ExecuteReader();
+
+            Disciplina disciplina;
+            Aluno aluno = new Aluno();
+            List<Disciplina> disciplinas = new List<Disciplina>();
+            while (dr.Read())
+            {
+                disciplina = new Disciplina();
+                if (dr["NomeDisciplina"] != DBNull.Value)
+                disciplina.IdAluno = Convert.ToInt32(dr["IdAluno"]);
+                disciplina.IdDisciplina = Convert.ToInt32(dr["IdDisciplina"]);
+                disciplina.Aluno = aluno;
+
+                disciplina.Aluno.Nome_Aluno = Convert.ToString(dr["Nome_Aluno"]);
+
+
+                disciplina.NomeDisciplina = Convert.ToString(dr["NomeDisciplina"]);
+                if (disciplina.NomeDisciplina != null)
+                {
+                    disciplinas.Add(disciplina);
+                }
+            }
+
+            return disciplinas;
+        }
+        #endregion
+
+        #region Insert de Disciplina
+        public static void InsertDisciplinaDb(Disciplina disciplina)
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlConnection conn = null;
+            List<SqlParameter> param = new List<SqlParameter>();
+            param.Add(new SqlParameter("@NomeDisciplina", SqlDbType.VarChar));
+            param.Add(new SqlParameter("@IdAluno", SqlDbType.VarChar));
+            param[0].Value = disciplina.NomeDisciplina;
+            param[1].Value = disciplina.IdAluno;
+
+            cmd.Parameters.Add(param[0]);
+            cmd.Parameters.Add(param[1]);
+            conn = AcessarDb(cmd, conn, InsertDisciplina);
+            using (SqlTransaction trans = conn.BeginTransaction())
+            {
+                cmd.Transaction = trans;
+
+                cmd.ExecuteNonQuery();
+                cmd.Parameters.Clear();
+                trans.Commit();
+                conn.Close();
+            }
+        }
+        #endregion
+
         #endregion
 
     }

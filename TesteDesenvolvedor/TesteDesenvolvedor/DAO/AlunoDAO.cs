@@ -44,5 +44,12 @@ namespace TesteDesenvolvedor.DAO
         }
         #endregion
 
+        #region Listar Disciplinas do Aluno
+        public static List<Disciplina> ListDisciplinaAluno(int id)
+        {
+            return DbContext.SelectDisciplinaByAlunoDb(id);
+        }
+        #endregion
+
     }
 }

@@ -11,15 +11,17 @@
             <tr class="table-secondary">
                 <th scope="col">Nome</th>
                 <th scope="col">Editar</th>
+                <th scope="col">Mostrar as Disciplinas do Aluno</th>
                 <th scope="col">Excluir</th>
             </tr>
             @foreach (Aluno aluno in Model)
             {
-                <tr class="table-primary">
-                    <td>@aluno.Nome_Aluno</td>
-                    <td>@Html.ActionLink("Editar Aluno", "EditarAluno", "Home", new { idAluno = aluno.IdAluno}, new { @class = "btn btn-warning" })</td>
-                    <td>@Html.ActionLink("Excluir Aluno", "ExcluirAluno", "Home", new{IdAluno = aluno.IdAluno}, new { @class = "btn btn-danger" })</td>
-                </tr>
+            <tr class="table-primary">
+                <td>@aluno.Nome_Aluno</td>
+                <td>@Html.ActionLink("Editar Aluno", "EditarAluno", "Home", new { idAluno = aluno.IdAluno }, new { @class = "btn btn-warning" })</td>
+                <td>@Html.ActionLink("Exibir", "DisciplinasAluno", "Home", new { idAluno = aluno.IdAluno }, new { @class = "btn btn-warning" })</td>
+                <td>@Html.ActionLink("Excluir Aluno", "ExcluirAluno", "Home", new {idAluno = aluno.IdAluno }, new { @class = "btn btn-danger" })</td>
+            </tr>
 
             }
         </table>

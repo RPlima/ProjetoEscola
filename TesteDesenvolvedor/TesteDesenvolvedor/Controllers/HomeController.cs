@@ -73,14 +73,31 @@ namespace TesteDesenvolvedor.Controllers
         #region Excluir Aluno
         public ActionResult ExcluirAluno(int IdAluno)
         {
+
             AlunoDAO.ExcluirAluno(IdAluno);
             return RedirectToAction("GerenciarAlunos", "Home");
         }
         #endregion
 
+        #region Pág Mostrando as Disciplinas do Aluno
+        public ActionResult DisciplinasAluno(int idAluno)
+        {
+            ViewBag.Mostrar = AlunoDAO.ListDisciplinaAluno(idAluno);
+            List<Disciplina> disciplinas = ViewBag.Mostrar;
+            if (disciplinas.Count != 0)
+             { 
+                ViewBag.NomeAluno = disciplinas.First().Aluno.Nome_Aluno;
+             }
+            return View(ViewBag.Mostrar);
+        }
+
+        #endregion
+
         #endregion
 
         #region CRUD das Disciplinas
+
+        #region Pag Gerenciar Disciplina
         public ActionResult GerenciarDisciplinas()
         {
             return View(DisciplinaDAO.BuscarDisciplinas());
@@ -112,5 +129,45 @@ namespace TesteDesenvolvedor.Controllers
             }
         }
         #endregion
+
+        #region Pág Editar Disciplina
+        public ActionResult EditarDisciplina(int id)
+        {
+            ViewBag.IdAluno = new SelectList(AlunoDAO.BuscarAlunos(), "IdAluno", "Nome_Aluno");
+            return View(DisciplinaDAO.BuscarDisciplinaById(id));
+        }
+        #endregion
+
+        #region Edição da Disciplina
+        [HttpPost]
+        public ActionResult EditarDisciplina(Disciplina disciplinaNovo)
+        {
+            ViewBag.IdAluno = new SelectList(AlunoDAO.BuscarAlunos(), "IdAluno", "Nome_Aluno");
+            if (disciplinaNovo.IdAluno == 0 || disciplinaNovo.NomeDisciplina == null)
+            {
+                ModelState.AddModelError("", "Todos os campos são obrigatórios");
+                return RedirectToAction("Index", "Home");
+            }
+
+            Disciplina disciplinaOriginal = DisciplinaDAO.BuscarDisciplinaById(disciplinaNovo.IdDisciplina);
+            disciplinaOriginal.NomeDisciplina = disciplinaNovo.NomeDisciplina;
+            disciplinaOriginal.IdAluno = disciplinaNovo.IdAluno;
+            DisciplinaDAO.EditarDisciplina(disciplinaOriginal);
+
+            return RedirectToAction("GerenciarDisciplinas", "Home");
+
+        }
+        #endregion
+
+        #region Excluir Disciplina
+        public ActionResult ExcluirDisciplina(int id)
+        {
+            DisciplinaDAO.DeletarDisciplina(id);
+           return RedirectToAction("GerenciarDisciplinas", "Home"); ;
+        }
+        #endregion
+
+        #endregion
+
     }
 }

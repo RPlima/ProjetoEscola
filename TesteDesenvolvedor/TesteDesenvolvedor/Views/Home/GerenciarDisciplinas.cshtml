@@ -21,8 +21,8 @@
             <td>@disciplina.IdDisciplina</td>
             <td>@disciplina.NomeDisciplina</td>
             <td>@disciplina.Aluno.Nome_Aluno</td>
-            <td>@Html.ActionLink("Editar Disciplina", "EditarDisciplina", "Home", new { idAluno = disciplina.IdDisciplina }, new { @class = "btn btn-warning" })</td>
-            <td>@Html.ActionLink("Excluir Disciplina", "ExcluirDisciplina", "Home", new { IdAluno = disciplina.IdDisciplina }, new { @class = "btn btn-danger" })</td>
+            <td>@Html.ActionLink("Editar Disciplina", "EditarDisciplina", "Home", new { id = disciplina.IdDisciplina }, new { @class = "btn btn-warning" })</td>
+            <td>@Html.ActionLink("Excluir Disciplina", "ExcluirDisciplina", "Home", new { id = disciplina.IdDisciplina }, new { @class = "btn btn-danger" })</td>
         </tr>
 
         }

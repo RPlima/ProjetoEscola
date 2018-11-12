@@ -1,0 +1,38 @@
+﻿@using TesteDesenvolvedor.Models
+@model List<Disciplina>
+@{
+    ViewBag.Title = "Disciplinas do Aluno";
+}
+
+
+<div class="container-fluid" style="width: 40%;">
+    @if (Model.Count != 0)
+    {
+        <h2>Disciplinas do @ViewBag.NomeAluno </h2>
+        <table class="table table-hover">
+            <tr class="table-secondary">
+                <th scope="col">Id</th>
+                <th scope="col">Disciplina</th>
+                <th scope="col">Editar</th>
+                <th scope="col">Excluir</th>
+            </tr>
+            @foreach (Disciplina disciplina in Model)
+            {
+                <tr class="table-primary">
+                    <td>@disciplina.IdDisciplina</td>
+                    <td>@disciplina.NomeDisciplina</td>
+                    <td>@Html.ActionLink("Editar Disciplina", "EditarDisciplina", "Home", new { id = disciplina.IdDisciplina }, new { @class = "btn btn-warning" })</td>
+                    <td>@Html.ActionLink("Excluir Disciplina", "ExcluirDisciplina", "Home", new { id = disciplina.IdDisciplina }, new { @class = "btn btn-danger" })</td>
+                </tr>
+
+            }
+        </table>
+        @Html.ActionLink("Cadastrar", "CadastrarDisciplina", "Home", null, new { @class = "btn btn-success" })
+    }
+    else
+    {
+        <h1>Não Existe disciplinas Cadastradas com esse Aluno!</h1>
+    }
+        @Html.ActionLink("Voltar", "GerenciarAlunos", "Home", null, new { @class = "btn btn-success" })
+</div>
+

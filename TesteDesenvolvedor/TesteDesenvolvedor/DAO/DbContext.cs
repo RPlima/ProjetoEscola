@@ -54,10 +54,10 @@ namespace TesteDesenvolvedor.DAO
        */
 
         #region Acesso Ao Banco
-        private const string strcon = "Data Source=CQI-DEV-0833;Initial Catalog=Escola;Integrated Security=SSPI;";
+        private const string strcon = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Escola;Integrated Security=SSPI;";
 
 
-        public static SqlConnection AcessarDb(SqlCommand cmd, SqlConnection conn, string Query)
+        private static SqlConnection AcessarDb(SqlCommand cmd, SqlConnection conn, string Query)
         {
             conn = new SqlConnection(strcon);
             cmd.Connection = conn;
@@ -87,10 +87,12 @@ namespace TesteDesenvolvedor.DAO
 
         #region Disciplinas Query
         private const string BuscarTodasDisciplinas = @"Select IdDisciplina,NomeDisciplina,Nome_Aluno, d.IdAluno 
-                                                 from Disciplina d Join Aluno a on d.IdAluno = a.IdAluno";
-
+                                                        from Disciplina d Join Aluno a on d.IdAluno = a.IdAluno";
+        private const string BuscarDiciplinaById = @"Select * from Disciplina where IdDisciplina = @IdDisciplina";
         private const string InsertDisciplina = @"insert into Disciplina(NomeDisciplina, IdAluno) values(@NomeDisciplina, @IdAluno)";
-
+        private const string UpdateDisciplina = @"Update Disciplina set NomeDisciplina = @NomeDisciplina, IdAluno = @IdAluno where IdDisciplina = @IdDisciplina";
+        private const string DeleteDisciplina = @"Delete Disciplina where IdDisciplina = @IdDisciplina";
+        private const string SelectDisciplinaByAluno = @"Select * From Disciplina d join Aluno a on d.IdAluno = a.IdAluno where d.IdAluno = @IdAluno";
         #endregion
 
         #endregion
@@ -208,6 +210,9 @@ namespace TesteDesenvolvedor.DAO
         #region Delete de Aluno
         public static void DeleteAlunoDb(int id)
         {
+            //Deletando todas as Disciplinas Referente ao Aluno, antes de deletar o Aluno. Desse modo, não haverá conflito.
+            DeleteDisciplinaDb(id);
+
             SqlCommand cmd = new SqlCommand();
             SqlConnection conn = null;
             List<SqlParameter> param = new List<SqlParameter>();
@@ -227,6 +232,50 @@ namespace TesteDesenvolvedor.DAO
                 conn.Close();
             }
         }
+        #endregion
+
+        #region Select Disciplinas por id Aluno
+        public static List<Disciplina> SelectDisciplinaByAlunoDb(int id)
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlDataReader dr = null;
+            SqlConnection conn = null;
+            AcessarDb(cmd, conn, SelectDisciplinaByAluno);
+            List<SqlParameter> param = new List<SqlParameter>();
+
+            param.Add(new SqlParameter("@IdAluno", SqlDbType.Int));
+            param[0].Value = id;
+
+            cmd.Parameters.Add(param[0]);
+
+
+            dr = cmd.ExecuteReader();
+
+            Disciplina disciplina;
+            Aluno aluno = new Aluno();
+            List<Disciplina> disciplinas = new List<Disciplina>();
+            while (dr.Read())
+            {
+                disciplina = new Disciplina();
+                if (dr["NomeDisciplina"] != DBNull.Value)
+                    disciplina.IdAluno = Convert.ToInt32(dr["IdAluno"]);
+                disciplina.IdDisciplina = Convert.ToInt32(dr["IdDisciplina"]);
+
+                disciplina.Aluno = aluno;
+
+                disciplina.Aluno.Nome_Aluno = Convert.ToString(dr["Nome_Aluno"]);
+                disciplina.Aluno.IdAluno = Convert.ToInt32(dr["IdAluno"]);
+
+                disciplina.NomeDisciplina = Convert.ToString(dr["NomeDisciplina"]);
+                if (disciplina.NomeDisciplina != null)
+                {
+                    disciplinas.Add(disciplina);
+                }
+            }
+
+            return disciplinas;
+        }
+
         #endregion
 
         #endregion
@@ -281,6 +330,91 @@ namespace TesteDesenvolvedor.DAO
             cmd.Parameters.Add(param[0]);
             cmd.Parameters.Add(param[1]);
             conn = AcessarDb(cmd, conn, InsertDisciplina);
+            using (SqlTransaction trans = conn.BeginTransaction())
+            {
+                cmd.Transaction = trans;
+
+                cmd.ExecuteNonQuery();
+                cmd.Parameters.Clear();
+                trans.Commit();
+                conn.Close();
+            }
+        }
+        #endregion
+
+        #region Update de Disciplina
+        public static void UpadadeDisciplinaDb(Disciplina disciplina)
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlConnection conn = null;
+            List<SqlParameter> param = new List<SqlParameter>();
+            param.Add(new SqlParameter("@NomeDisciplina", SqlDbType.VarChar));
+            param.Add(new SqlParameter("@IdAluno", SqlDbType.Int));
+            param.Add(new SqlParameter("@IdDisciplina", SqlDbType.Int));
+            param[0].Value = disciplina.NomeDisciplina;
+            param[1].Value = disciplina.IdAluno;
+            param[2].Value = disciplina.IdDisciplina;
+
+            cmd.Parameters.Add(param[0]);
+            cmd.Parameters.Add(param[1]);
+            cmd.Parameters.Add(param[2]);
+
+            conn = AcessarDb(cmd, conn, UpdateDisciplina);
+            using (SqlTransaction trans = conn.BeginTransaction())
+            {
+                cmd.Transaction = trans;
+
+                cmd.ExecuteNonQuery();
+                cmd.Parameters.Clear();
+                trans.Commit();
+                conn.Close();
+            }
+        }
+
+        #endregion
+
+        #region Select de Disciplina por Id
+        public static Disciplina SelectDisciplinaById(int id)
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlDataReader dr = null;
+            SqlConnection conn = null;
+            AcessarDb(cmd, conn, BuscarDiciplinaById);
+
+            List<SqlParameter> param = new List<SqlParameter>();
+            param.Add(new SqlParameter("@IdDisciplina", SqlDbType.Int));
+            param[0].Value = id;
+
+            cmd.Parameters.Add(param[0]);
+
+            dr = cmd.ExecuteReader();
+
+            Disciplina disciplina = new Disciplina();
+            while (dr.Read())
+            {
+                if (dr["NomeDisciplina"] != DBNull.Value)
+                    disciplina.IdAluno = Convert.ToInt32(dr["IdAluno"]);
+                    disciplina.IdDisciplina = Convert.ToInt32(dr["IdDisciplina"]);
+                    disciplina.NomeDisciplina = Convert.ToString(dr["NomeDisciplina"]);
+            }
+
+            cmd.Parameters.Clear();
+            return disciplina;
+        }
+        #endregion
+
+        #region Delete de Disciplina
+        public static void DeleteDisciplinaDb(int id)
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlConnection conn = null;
+            List<SqlParameter> param = new List<SqlParameter>();
+            param.Add(new SqlParameter("@IdDisciplina", SqlDbType.Int));
+            param[0].Value = id;
+
+            cmd.Parameters.Add(param[0]);
+
+            conn = AcessarDb(cmd, conn, DeleteDisciplina);
             using (SqlTransaction trans = conn.BeginTransaction())
             {
                 cmd.Transaction = trans;

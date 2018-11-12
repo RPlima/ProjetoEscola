@@ -55,6 +55,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -160,7 +162,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811121423330_CreateDatabase.cs" />
+    <Compile Include="Migrations\201811121423330_CreateDatabase.Designer.cs">
+      <DependentUpon>201811121423330_CreateDatabase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Aluno.cs" />
+    <Compile Include="Models\Context.cs" />
     <Compile Include="Models\Disciplina.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -205,6 +213,8 @@
     <Content Include="Views\Home\EditarAluno.cshtml" />
     <Content Include="Views\Home\GerenciarDisciplinas.cshtml" />
     <Content Include="Views\Home\CadastrarDisciplina.cshtml" />
+    <Content Include="Views\Home\EditarDisciplina.cshtml" />
+    <Content Include="Views\Home\DisciplinasAluno.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -221,6 +231,11 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201811121423330_CreateDatabase.resx">
+      <DependentUpon>201811121423330_CreateDatabase.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

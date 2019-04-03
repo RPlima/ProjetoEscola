@@ -10,48 +10,7 @@ namespace TesteDesenvolvedor.DAO
 {
     public class DbContext
     {
-        /*  string strcon = "Data Source=10.5.0.4\\PRD;Initial Catalog=SINE_PRD;User ID=SINE_app;Password=s1n3pr0d@2014;";
-                SqlDataReader dr = null;
-                SqlConnection conn = new SqlConnection(strcon);
-                SqlCommand cmd = new SqlCommand();
-                cmd.Connection = conn;
-                conn.Open();
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText = ExecutaQueryParaLiparCampo;
-
-   
-         *    List<SqlParameter> param = new List<SqlParameter>();
-               param.Add(new SqlParameter("@Idf_Vaga", SqlDbType.Int, 4));
-                   param.Add(new SqlParameter("@Des_Vaga", SqlDbType.VarChar));
-                   param.Add(new SqlParameter("@Nme_Sinonimo", SqlDbType.VarChar, 50));
-
-                   param[0].Value = this.Idf_Vaga;
-                   param[1].Value = this.descricao;
-                   param[2].Value = this.funcao;
-
-                   string strcon = "Data Source=10.5.0.4\\PRD;Initial Catalog=SINE_PRD;User ID=SINE_app;Password=s1n3pr0d@2014;";
-               SqlDataReader dr = null;
-               SqlConnection conn = new SqlConnection(strcon);
-               SqlCommand cmd = new SqlCommand();
-               cmd.Connection = conn;
-
-
-
-                            cmd.CommandType = CommandType.Text;
-                           cmd.CommandText = ExecutaQueryInsert;
-                           cmd.Transaction = trans;
-
-
-
-                           cmd.ExecuteNonQuery();
-                           cmd.Parameters.Clear();
-
-                           trans.Commit();
-                           conn.Close();
-
-                    trans.Rollback();
-                    conn.Close();
-       */
+        
 
         #region Acesso Ao Banco
         private const string strcon = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Escola;Integrated Security=SSPI;";
